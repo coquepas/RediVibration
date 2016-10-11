@@ -1,3 +1,4 @@
+#!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct  5 09:22:46 2016
@@ -15,7 +16,7 @@ b=35                #mm hauteur
 n=int(input("Combien d'éléments poutre voulez-vous?"))
 nu=0.3
 
-lp=L/n              #Longueur d'une poutre mm           
+lp=L/n              #Longueur d'une poutre mm
 Ip=a*b**3/12        #mm4
 mp=pho*a*b*lp       #kg
 
@@ -35,12 +36,12 @@ m6=(6+14*phi+7*phi**2)*lp**2
 Mp=array([[m1,m2,m3,-m4],[m2,m5,m4,-m6],[m3,m4,m1,-m2],[-m4,-m6,-m2,m5]])*mp/840
 
 
- 
-#Matrice raideur d'une poutre            
+
+#Matrice raideur d'une poutre
 Kp=array([[12,6*lp,-12,6*lp],[6*lp,(4+phi)*lp**2,-6*lp,(2-phi)*lp**2],
              [-12,-6*lp,12,-6*lp]
              ,[6*lp,(2-phi)*lp**2,-6*lp,(4+phi)*lp**2]])*E*Ip/(lp**3)*10**-3
-        
+
 #Initialisation des matrices Masse et Raideur
 M=zeros(((n+1)*2,(n+1)*2))
 K=zeros((2*(n+1),2*(n+1)))
@@ -67,8 +68,8 @@ for i,freq in enumerate(W):
 L.sort()
 u=delete(u,L,1)  #Suppresion des veceurs propres associés aux modes rigides
 W2=delete(W,L)    #suppresion des fréquences propres "nulles"
-W2=[W2[i].real for i in range(len(W2))]  #On transforme en réel (il y a des cas 
-#particulier ou on a des complexes avec valeurs imaginaires 
+W2=[W2[i].real for i in range(len(W2))]  #On transforme en réel (il y a des cas
+#particulier ou on a des complexes avec valeurs imaginaires
 #nulle ce qui posent problème pour l'utilisation de certaines fonction après)
 
 #Récupération des fréquences propres
@@ -78,6 +79,9 @@ wtri=sorted(w)
 w=list(w)
 for iwtri,elt in enumerate(wtri):
     indices+=[w.index(elt)]       #Ne fonctionne pas si 2 fréquences identiques
-utri=[u[:,ind].real for ind in indices]  
+utri=[u[:,ind].real for ind in indices]
 #Vecteur en ligne cette fois (plus simple)
 #utri[0] correspond au premier vecteur propre utri[1] au deuxieme etc..
+for i in range(len(wtri)):
+    print("Fréquence f",i+1,"=",wtri[i]," Hz",sep="")
+    print("Vecteur propre :\n",utri[i])

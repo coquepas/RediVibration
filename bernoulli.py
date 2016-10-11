@@ -1,3 +1,4 @@
+#!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
 """
 Created on Tue Oct  4 14:53:22 2016
@@ -14,18 +15,17 @@ a=58                #mm largeur
 b=35                #mm hauteur
 n=int(input("Combien d'éléments poutre voulez-vous?"))
 
-lp=L/n              #Longueur d'une poutre mm           
+lp=L/n              #Longueur d'une poutre mm
 Ip=a*b**3/12        #mm4
 mp=pho*a*b*lp       #kg
 
 #Matrice masse d'une poutre
 Mp=array([[156,22*lp,54,-13*lp],[22*lp,4*lp**2,13*lp,-3*lp**2],
              [54,13*lp,156,-22*lp],[-13*lp,-3*lp**2,-22*lp,4*lp**2]])*mp/420
- 
-#Matrice raideur d'une poutre            
+
+#Matrice raideur d'une poutre
 Kp=array([[12,6*lp,-12,6*lp],[6*lp,4*lp**2,-6*lp,2*lp**2],
              [-12,-6*lp,12,-6*lp],[6*lp,2*lp**2,-6*lp,4*lp**2]])*E*Ip/(lp**3)*10**-3
-        
 #Initialisation des matrices Masse et Raideur
 M=zeros(((n+1)*2,(n+1)*2))
 K=zeros((2*(n+1),2*(n+1)))
@@ -52,8 +52,8 @@ for i,freq in enumerate(W):
 L.sort()
 u=delete(u,L,1)  #Suppresion des veceurs propres associés aux modes rigides
 W=delete(W,L)    #suppresion des fréquences propres "nulles"
-W=[W[i].real for i in range(len(W))]    #On transforme en réel (il y a des cas 
-#particulier ou on a des complexes avec valeurs imaginaires 
+W=[W[i].real for i in range(len(W))]    #On transforme en réel (il y a des cas
+#particulier ou on a des complexes avec valeurs imaginaires
 #nulle ce qui posent problème pour l'utilisation de certaines fonction après)
 
 #Récupération des fréquences propres
@@ -62,10 +62,9 @@ indices=[]
 wtri=sorted(w)
 w=list(w)
 for iwtri,elt in enumerate(wtri):
-    indices+=[w.index(elt)]         #Ne fonctionne pas si 2 fréquences identiques
+    indices+=[w.index(elt)]       #Ne fonctionne pas si 2 fréquences identiques
 utri=[u[:,ind].real for ind in indices]  #Vecteur en ligne cette fois (plus simple)
 #utri[0] correspond au premier vecteur propre utri[1] au deuxieme etc..
-
-
-
-
+for i in range(len(wtri)):
+    print("Fréquence f",i+1,"=",wtri[i]," Hz",sep="")
+    print("Vecteur propre :\n",utri[i])

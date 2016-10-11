@@ -1,3 +1,4 @@
+#!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
 """
 Created on Mon Oct  3 08:49:08 2016
@@ -50,8 +51,8 @@ for i,freq in enumerate(W):
 L.sort()
 u=np.delete(u,L,1)  #Suppresion des veceurs propres associés aux modes rigides
 W=np.delete(W,L)    #suppresion des fréquences propres "nulles"
-W=[W[i].real for i in range(len(W))]    #On transforme en réel (il y a des cas 
-#particulier ou on a des complexes avec valeurs imaginaires 
+W=[W[i].real for i in range(len(W))]    #On transforme en réel (il y a des cas
+#particulier ou on a des complexes avec valeurs imaginaires
 #nulle ce qui posent problème pour l'utilisation de certaines fonctions après)
 
 #Récupération des fréquences propres
@@ -63,21 +64,6 @@ for iwtri,elt in enumerate(wtri):
     indices+=[w.index(elt)]       #Ne fonctionne pas si 2 fréquences identiques
 utri=[u[:,ind].real for ind in indices]#Vecteur en ligne cette fois (plus simple)
 #utri[0] correspond au premier vecteur propre utri[1] au deuxieme etc..
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-      
+for i in range(len(wtri)):
+    print("Fréquence f",i+1,"=",wtri[i]," Hz",sep="")
+    print("Vecteur propre :\n",utri[i])
