@@ -8,11 +8,11 @@ Modèle Timoshenko
 
 from numpy import *
 
-pho=7.85*10**-6     #kg/mm3
-E=2*10**5           #MPa
-L=459               #mm
-a=58                #mm largeur
-b=35                #mm hauteur
+pho=7.85*10**3     #kg/mm3
+E=2.1*10**11           #MPa
+L=459*10**-3               #mm
+a=58*1**-3                #mm largeur
+b=35*10**-3                #mm hauteur
 n=int(input("Combien d'éléments poutre voulez-vous?"))
 nu=0.3
 
@@ -21,7 +21,7 @@ Ip=a*b**3/12        #mm4
 mp=pho*a*b*lp       #kg
 
 #Corrections Timoshenko
-eta=(12+11*nu)/(10*(1+nu))
+eta=6/5 #(12+11*nu)/(10*(1+nu))
 phi=24*eta*Ip*(1+nu)/(a*b*lp**2)
 
 #Matrice masse d'une poutre
@@ -40,7 +40,7 @@ Mp=array([[m1,m2,m3,-m4],[m2,m5,m4,-m6],[m3,m4,m1,-m2],[-m4,-m6,-m2,m5]])*mp/840
 #Matrice raideur d'une poutre
 Kp=array([[12,6*lp,-12,6*lp],[6*lp,(4+phi)*lp**2,-6*lp,(2-phi)*lp**2],
              [-12,-6*lp,12,-6*lp]
-             ,[6*lp,(2-phi)*lp**2,-6*lp,(4+phi)*lp**2]])*E*Ip/(lp**3)*10**-3
+             ,[6*lp,(2-phi)*lp**2,-6*lp,(4+phi)*lp**2]])*E*Ip/(lp**3*(1+phi))
 
 #Initialisation des matrices Masse et Raideur
 M=zeros(((n+1)*2,(n+1)*2))
@@ -76,12 +76,14 @@ W2=[W2[i].real for i in range(len(W2))]  #On transforme en réel (il y a des cas
 w=sqrt(W2)
 indices=[]
 wtri=sorted(w)
+f=[wtri[i]/(2*pi) for i in range(len(wtri))]
 w=list(w)
 for iwtri,elt in enumerate(wtri):
     indices+=[w.index(elt)]       #Ne fonctionne pas si 2 fréquences identiques
 utri=[u[:,ind].real for ind in indices]
 #Vecteur en ligne cette fois (plus simple)
 #utri[0] correspond au premier vecteur propre utri[1] au deuxieme etc..
-for i in range(len(wtri)):
-    print("Fréquence f",i+1,"=",wtri[i]," Hz",sep="")
-    print("Vecteur propre :\n",utri[i])
+#for i in range(len(wtri)):
+#    print("Fréquence f",i+1,"=",f[i]," Hz",sep="")
+#    print("Vecteur propre :\n",utri[i])
+print(f[0],f[1],f[2])

@@ -8,15 +8,15 @@ Modèle de Bernouilli
 
 from numpy import *
 
-pho=7.85*10**-6     #kg/mm3
-E=2*10**5           #MPa
-L=459               #mm
-a=58                #mm largeur
-b=35                #mm hauteur
+pho=7.85*10**3      #kg/m3
+E=2.1*10**11          #Pa
+L=459*10**-3        #m
+a=58*10**-3         #m largeur
+b=35*10**-3         #m hauteur
 n=int(input("Combien d'éléments poutre voulez-vous?"))
 
 lp=L/n              #Longueur d'une poutre mm
-Ip=a*b**3/12        #mm4
+Ip=a*b**3/12        #m4
 mp=pho*a*b*lp       #kg
 
 #Matrice masse d'une poutre
@@ -25,7 +25,7 @@ Mp=array([[156,22*lp,54,-13*lp],[22*lp,4*lp**2,13*lp,-3*lp**2],
 
 #Matrice raideur d'une poutre
 Kp=array([[12,6*lp,-12,6*lp],[6*lp,4*lp**2,-6*lp,2*lp**2],
-             [-12,-6*lp,12,-6*lp],[6*lp,2*lp**2,-6*lp,4*lp**2]])*E*Ip/(lp**3)*10**-3
+             [-12,-6*lp,12,-6*lp],[6*lp,2*lp**2,-6*lp,4*lp**2]])*E*Ip/(lp**3)
 #Initialisation des matrices Masse et Raideur
 M=zeros(((n+1)*2,(n+1)*2))
 K=zeros((2*(n+1),2*(n+1)))
@@ -41,8 +41,7 @@ for k in range(0,2*n,2):
 
 invM=linalg.inv(M)
 A=dot(invM,K)
-W,u=linalg.eig(A)
-
+W,u=linalg.eig(A)   #Essai avec 2 matrices M et K
 L=[]
 
 #Recheches des modes rigides
@@ -60,11 +59,13 @@ W=[W[i].real for i in range(len(W))]    #On transforme en réel (il y a des cas
 w=sqrt(W)
 indices=[]
 wtri=sorted(w)
+f=[wtri[i]/(2*pi) for i in range(len(wtri))]
 w=list(w)
 for iwtri,elt in enumerate(wtri):
     indices+=[w.index(elt)]       #Ne fonctionne pas si 2 fréquences identiques
 utri=[u[:,ind].real for ind in indices]  #Vecteur en ligne cette fois (plus simple)
 #utri[0] correspond au premier vecteur propre utri[1] au deuxieme etc..
-for i in range(len(wtri)):
-    print("Fréquence f",i+1,"=",wtri[i]," Hz",sep="")
-    print("Vecteur propre :\n",utri[i])
+#for i in range(len(wtri)):
+#    print("Fréquence f",i+1,"=",f[i]," Hz",sep="")
+#    print("Vecteur propre :\n",utri[i])
+print(f[0],f[1],f[2])
