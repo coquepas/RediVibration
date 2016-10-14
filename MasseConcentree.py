@@ -26,8 +26,8 @@ for i in range(2*n):
     else:
         M[i][i]=J
 K=np.zeros((2*n,2*n))               #Initialisation  de la matrice raideur
-lp=L/(n-1)                          #mm
-Iqua=a*b**3/12                      #mm4
+lp=L/(n-1)                          #m
+Iqua=a*b**3/12                      #m4
 Ks=np.array([[12,6*lp,-12,6*lp],[6*lp,4*lp**2,-6*lp,2*lp**2],
              [-12,-6*lp,12,-6*lp]
              ,[6*lp,2*lp**2,-6*lp,4*lp**2]])*E*Iqua/lp**3
@@ -65,4 +65,4 @@ for iwtri,elt in enumerate(wtri):
     indices+=[w.index(elt)]       #Ne fonctionne pas si 2 fréquences identiques
 utri=[u[:,ind].real for ind in indices]#Vecteur en ligne cette fois (plus simple)
 #utri[0] correspond au premier vecteur propre utri[1] au deuxieme etc..
-print(f[0],f[1],f[2])
+print(f[0],'Hz ',f[1],'Hz ',f[2],'Hz')

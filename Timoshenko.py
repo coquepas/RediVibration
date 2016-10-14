@@ -8,21 +8,21 @@ Modèle Timoshenko
 
 from numpy import *
 
-pho=7.85*10**3     #kg/mm3
-E=2.1*10**11           #MPa
-L=459*10**-3               #mm
-a=58*1**-3                #mm largeur
-b=35*10**-3                #mm hauteur
+pho=7.85*10**3     #kg/m3
+E=2.1*10**11       #Pa
+L=459*10**-3       #m
+a=58*1**-3         #m largeur
+b=35*10**-3        #m hauteur
 n=int(input("Combien d'éléments poutre voulez-vous?"))
 nu=0.3
 
-lp=L/n              #Longueur d'une poutre mm
-Ip=a*b**3/12        #mm4
+lp=L/n              #Longueur d'une poutre m
+Ip=a*b**3/12        #m4
 mp=pho*a*b*lp       #kg
 
 #Corrections Timoshenko
-eta=6/5 #(12+11*nu)/(10*(1+nu))
-phi=24*eta*Ip*(1+nu)/(a*b*lp**2)
+eta=(12+11*nu)/(10*(1+nu))
+phi=24*eta*Ip*(1+nu)/(a*b*L**2)
 
 #Matrice masse d'une poutre
 m1=312+588*phi+280*phi**2
@@ -86,4 +86,4 @@ utri=[u[:,ind].real for ind in indices]
 #for i in range(len(wtri)):
 #    print("Fréquence f",i+1,"=",f[i]," Hz",sep="")
 #    print("Vecteur propre :\n",utri[i])
-print(f[0],f[1],f[2])
+print(f[0],'Hz ',f[1],'Hz ',f[2],'Hz')

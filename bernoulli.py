@@ -9,13 +9,13 @@ Modèle de Bernouilli
 from numpy import *
 
 pho=7.85*10**3      #kg/m3
-E=2.1*10**11          #Pa
+E=2.1*10**11        #Pa
 L=459*10**-3        #m
 a=58*10**-3         #m largeur
 b=35*10**-3         #m hauteur
 n=int(input("Combien d'éléments poutre voulez-vous?"))
 
-lp=L/n              #Longueur d'une poutre mm
+lp=L/n              #Longueur d'une poutre m
 Ip=a*b**3/12        #m4
 mp=pho*a*b*lp       #kg
 
@@ -41,7 +41,7 @@ for k in range(0,2*n,2):
 
 invM=linalg.inv(M)
 A=dot(invM,K)
-W,u=linalg.eig(A)   #Essai avec 2 matrices M et K
+W,u=linalg.eig(A)   
 L=[]
 
 #Recheches des modes rigides
@@ -68,4 +68,4 @@ utri=[u[:,ind].real for ind in indices]  #Vecteur en ligne cette fois (plus simp
 #for i in range(len(wtri)):
 #    print("Fréquence f",i+1,"=",f[i]," Hz",sep="")
 #    print("Vecteur propre :\n",utri[i])
-print(f[0],f[1],f[2])
+print(f[0],'Hz ',f[1],'Hz ',f[2],'Hz ')
