@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct 19 14:10:23 2016
-Timo2
+
 @author: gwendal
 """
 
@@ -10,7 +10,7 @@ from numpy import *
 pho=7.85*10**3     #kg/m3
 E=2.1*10**11       #Pa
 L=459*10**-3       #m
-a=58*10**-3         #m largeur
+a=58*10**-3        #m largeur
 b=35*10**-3        #m hauteur
 n=int(input("Combien d'éléments voulez-vous?"))
 nu=0.3
