@@ -1,7 +1,7 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct 19 14:10:23 2016
-Timo2
 @author: gwendal
 """
 
@@ -10,15 +10,15 @@ from numpy import *
 pho=7.85*10**3     #kg/m3
 E=2.1*10**11       #Pa
 L=459*10**-3       #m
-a=58*10**-3         #m largeur
+a=58*10**-3        #m largeur
 b=35*10**-3        #m hauteur
 n=int(input("Combien d'éléments voulez-vous?"))
 nu=0.3
 
 lp=L/n              #Longueur d'une poutre m
-Ip=a*b**3/12        #m4
+Iq=a*b**3/12        #m4
 mp=pho*a*b*lp       #kg
-
+J=mp*(lp**2+b**2)/12
 #Initialisation des matrices Masse et Raideur
 M=zeros(((n+1)*2,(n+1)*2))
 K=zeros((2*(n+1),2*(n+1)))
@@ -46,7 +46,7 @@ elif entree==2:
 else:
     #Corrections Timoshenko
     eta=(12+11*nu)/(10*(1+nu))
-    phi=24*eta*Ip*(1+nu)/(a*b*L**2)
+    phi=24*eta*Iq*(1+nu)/(a*b*L**2)
     
     #Matrice masse d'une poutre
     m1=312+588*phi+280*phi**2
@@ -57,14 +57,14 @@ else:
     m6=(6+14*phi+7*phi**2)*lp**2
     
     #Matrice masse d'un élément
-    Mp=array([[m1,m2,m3,-m4],[m2,m5,m4,-m6],[m3,m4,m1,-m2],[-m4,-m6,-m2,m5]])*mp/840
+    Ms=array([[m1,m2,m3,-m4],[m2,m5,m4,-m6],[m3,m4,m1,-m2],[-m4,-m6,-m2,m5]])*mp/840
     
     
     
     #Matrice raideur d'une poutre
-    Kp=array([[12,6*lp,-12,6*lp],[6*lp,(4+phi)*lp**2,-6*lp,(2-phi)*lp**2],
+    Ks=array([[12,6*lp,-12,6*lp],[6*lp,(4+phi)*lp**2,-6*lp,(2-phi)*lp**2],
                  [-12,-6*lp,12,-6*lp]
-                 ,[6*lp,(2-phi)*lp**2,-6*lp,(4+phi)*lp**2]])*E*Ip/(lp**3*(1+phi))
+                 ,[6*lp,(2-phi)*lp**2,-6*lp,(4+phi)*lp**2]])*E*Iq/(lp**3*(1+phi))
 
 
 
@@ -98,7 +98,6 @@ W=[W[i].real for i in range(len(W))]  #On transforme en réel (il y a des cas
 f=list(1/(2*pi)*sqrt(W))
 indices=[]
 ftri=sorted(f)
-w=list(w)
 for iwtri,elt in enumerate(ftri):
     indices+=[f.index(elt)]       #Ne fonctionne pas si 2 fréquences identiques
 utri=[u[:,ind].real for ind in indices]
