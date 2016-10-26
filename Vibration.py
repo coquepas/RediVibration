@@ -4,7 +4,7 @@
 Created on Wed Oct 19 14:10:23 2016
 @author: gwendal
 """
-
+from scipy.integrate import odeint
 from numpy import *
 
 pho=7.85*10**3     #kg/m3
