@@ -4,15 +4,16 @@
 Created on Wed Oct 19 14:10:23 2016
 @author: gwendal
 """
-from scipy.integrate import odeint
+from scipy.integrate import ode,odeint
 from numpy import *
+import matplotlib.pyplot as plt
 
 pho=7.85*10**3     #kg/m3
 E=2.1*10**11       #Pa
 L=459*10**-3       #m
 a=58*10**-3        #m largeur
 b=35*10**-3        #m hauteur
-n=int(input("Combien d'éléments voulez-vous?"))
+n=25#int(input("Combien d'éléments voulez-vous?"))
 nu=0.3
 
 lp=L/n              #Longueur d'une poutre m
@@ -26,7 +27,7 @@ K=zeros((2*(n+1),2*(n+1)))
 Choix="1-Modèle masses concentrées\n2-Modèle Bernoulli\n3-Modèle Timoshenko"
 print(Choix)
 while 1:
-    entree=int(input('Quel modèle choisissez-vous?'))
+    entree=3    #int(input('Quel modèle choisissez-vous?'))
     if entree not in [1,2,3]:
         print('\nMauvaise entrée!\n')
         print(Choix)
@@ -108,3 +109,85 @@ utri=[u[:,ind].real for ind in indices]
 #    print("Vecteur propre :\n",utri[i])
 if len(f)>=3:
     print(ftri[0],'Hz ',ftri[1],'Hz ',ftri[2],'Hz')
+#Recherche de la réponse spectrale
+
+
+a=print("Sur quel élément tapez vous?(Comrpis entre 1 et ",n+1,')',sep='')
+a=1 #input()
+position=int(a)
+
+  
+#Méthode modale
+
+#Matrice de passage
+U=array([[utri[j][i] for j in range(len(utri))] for i in range(len(utri[0]))])
+
+#Matrice masse diagonalisée
+Mdiag=dot(U.T,dot(M,U))
+for i in range(len(Mdiag[0])):
+    for j in range(len(Mdiag[0])):
+        if Mdiag[i,j]>10**-10:
+            Mdiag[i,j]=Mdiag[i,j]
+        else:
+            Mdiag[i,j]=0
+#Matrice inverse
+invMdiag=linalg.inv(Mdiag)
+
+#Matrice raideur diagonalisée
+Kdiag=dot(U.T,dot(K,U))
+for i in range(len(Kdiag[0])):
+    for j in range(len(Kdiag[0])):
+        if Kdiag[i,j]>10**-5:
+            Kdiag[i,j]=Kdiag[i,j]
+        else:
+            Kdiag[i,j]=0
+            
+#Matrice amortissement diagonale
+xi=0.001
+Bdiag=2*xi/(2*pi*ftri[0])*Kdiag
+
+B=2*xi/(2*pi*ftri[0])*K
+def imp(F0,T,t):
+    if t<T/2:
+        F=F0*sin(2*pi*t/T)
+    else:
+        F=0
+    return F
+    
+def deriv(y,t):
+    """Matrice diagonales"""
+    dydt=zeros_like(y)
+    milieu=int(len(y)/2)
+    dydt[:milieu]=y[milieu:]
+    F=zeros(2*(n+1))
+    F[position-1]=imp(20.0,0.24*10**-3,t)
+    C=dot(invMdiag,dot(U.T,F))-dot(invMdiag,dot(Bdiag,y[milieu:]))-dot(invMdiag,dot(Kdiag,y[:milieu]))
+    dydt[milieu:]=C
+    return dydt
+
+def deriv2(y,t):
+    """Solution directe"""
+    dydt=zeros_like(y)
+    milieu=int(len(y)/2)
+    dydt[:milieu]=y[milieu:]
+    F=zeros(2*(n+1))
+    F[position-1]=imp(20.0,0.24*10**-3,t)
+    C=dot(invM,F)-dot(invM,dot(B,y[milieu:]))-dot(invM,dot(K,y[:milieu]))
+    dydt[milieu:]=C
+    return dydt
+    
+
+
+y01=[0 for i in range(100)]
+y02=[0 for i in range(104)]
+t=linspace(0,0.005,200)
+RpNodale=odeint(deriv,y01,t)
+Solution2=odeint(deriv2,y02,t)
+Solution1=zeros((200,52))
+for i in range(200):
+    Solution1[i]=dot(U,RpNodale[i,:50])
+
+plt.plot(t,Solution1[:,0],'b-',t,Solution2[:,0],'r-')
+
+
+
