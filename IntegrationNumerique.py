@@ -4,7 +4,7 @@
 Created on Wed Oct 19 14:10:23 2016
 @author: gwendal
 """
-from scipy.integrate import ode,odeint
+from scipy.integrate import odeint
 from numpy import *
 import matplotlib.pyplot as plt
 
@@ -145,8 +145,9 @@ for i in range(len(Kdiag[0])):
 #Matrice amortissement diagonale
 xi=0.001
 Bdiag=2*xi/(2*pi*ftri[0])*Kdiag
-
 B=2*xi/(2*pi*ftri[0])*K
+
+
 def imp(F0,T,t):
     if t<T/2:
         F=F0*sin(2*pi*t/T)
@@ -179,15 +180,15 @@ def deriv2(y,t):
 
 
 y01=[0 for i in range(100)]
-y02=[0 for i in range(104)]
-t=linspace(0,0.005,200)
+#y02=[0 for i in range(104)]
+t=linspace(0,0.03,1200)
 RpNodale=odeint(deriv,y01,t)
-Solution2=odeint(deriv2,y02,t)
-Solution1=zeros((200,52))
-for i in range(200):
+#Solution2=odeint(deriv2,y02,t)
+Solution1=zeros((1200,52))
+for i in range(1200):
     Solution1[i]=dot(U,RpNodale[i,:50])
 
-plt.plot(t,Solution1[:,0],'b-',t,Solution2[:,0],'r-')
+plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
 
 
 
