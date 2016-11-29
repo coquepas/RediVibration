@@ -68,7 +68,6 @@ else:
                  ,[6*lp,(2-phi)*lp**2,-6*lp,(4+phi)*lp**2]])*E*Iq/(lp**3*(1+phi))
 
 
-
 #Définition des matrices masse et raideur
 for k in range(0,2*n,2):
     for i in range(4):
@@ -88,7 +87,7 @@ L=[]
 for i,freq in enumerate(W):
     if freq<=1:
         L+=[i]
-L.sort()
+L.sort()         #Liste contenant les indices des modes rigides
 u=delete(u,L,1)  #Suppresion des veceurs propres associés aux modes rigides
 W=delete(W,L)    #suppresion des fréquences propres "nulles"
 W=[W[i].real for i in range(len(W))]  #On transforme en réel (il y a des cas
@@ -167,7 +166,8 @@ def deriv(y,t):
     return dydt
 
 def deriv2(y,t):
-    """Solution directe"""
+    """Solution directe, conservation des modes rigides donc à ne utiliser
+    pour une intégration sans traitement des donnees"""
     dydt=zeros_like(y)
     milieu=int(len(y)/2)
     dydt[:milieu]=y[milieu:]
@@ -179,7 +179,7 @@ def deriv2(y,t):
     
 
 
-y01=[0 for i in range(100)]
+y01=[0 for i in range(100)]     #Conditions initiales nulles en position et vitesse
 #y02=[0 for i in range(104)]
 t=linspace(0,0.03,1200)
 RpNodale=odeint(deriv,y01,t)
@@ -189,6 +189,7 @@ for i in range(1200):
     Solution1[i]=dot(U,RpNodale[i,:50])
 
 plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
+
 
 
 
