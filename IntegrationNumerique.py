@@ -166,7 +166,7 @@ def deriv(y,t):
     return dydt
 
 def deriv2(y,t):
-    """Solution directe, conservation des modes rigides donc à ne utiliser
+    """Solution directe, conservation des modes rigides donc à ne pas utiliser
     pour une intégration sans traitement des donnees"""
     dydt=zeros_like(y)
     milieu=int(len(y)/2)
