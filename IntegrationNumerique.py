@@ -179,17 +179,18 @@ def deriv2(y,t):
     
 
 
-y01=[0 for i in range(100)]     #Conditions initiales nulles en position et vitesse
+y01=[0 for i in range(100)] #Conditions initiales nulles en position et vitesse
 #y02=[0 for i in range(104)]
-t=linspace(0,0.03,1200)
+t=linspace(0,0.04,2000)
 RpNodale=odeint(deriv,y01,t)
 #Solution2=odeint(deriv2,y02,t)
-Solution1=zeros((1200,52))
-for i in range(1200):
+Solution1=zeros((2000,52))
+for i in range(2000):
     Solution1[i]=dot(U,RpNodale[i,:50])
 
 plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
 
-
+fq=arange(0,5000,12.5)
+temps=arange(0,2/399*1/5000,10**-5)
 
 
