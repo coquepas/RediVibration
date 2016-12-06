@@ -111,8 +111,8 @@ if len(f)>=3:
 #Recherche de la réponse spectrale
 
 
-a=print("Sur quel élément tapez vous?(Comrpis entre 1 et ",n+1,')',sep='')
-a=1 #input()
+a=print("Sur quelle position tapez vous? (Compris entre 0 et ",n,' )',sep='')
+a=0 #input()
 position=int(a)
 
   
@@ -160,7 +160,7 @@ def deriv(y,t):
     milieu=int(len(y)/2)
     dydt[:milieu]=y[milieu:]
     F=zeros(2*(n+1))
-    F[position-1]=imp(20.0,0.24*10**-3,t)
+    F[2*position]=imp(20.0,0.24*10**-3,t)
     C=dot(invMdiag,dot(U.T,F))-dot(invMdiag,dot(Bdiag,y[milieu:]))-dot(invMdiag,dot(Kdiag,y[:milieu]))
     dydt[milieu:]=C
     return dydt
@@ -172,25 +172,46 @@ def deriv2(y,t):
     milieu=int(len(y)/2)
     dydt[:milieu]=y[milieu:]
     F=zeros(2*(n+1))
-    F[position-1]=imp(20.0,0.24*10**-3,t)
+    F[2*position]=imp(20.0,0.24*10**-3,t)
     C=dot(invM,F)-dot(invM,dot(B,y[milieu:]))-dot(invM,dot(K,y[:milieu]))
     dydt[milieu:]=C
     return dydt
     
 
 
-y01=[0 for i in range(100)] #Conditions initiales nulles en position et vitesse
-#y02=[0 for i in range(104)]
-t=linspace(0,0.04,2000)
-RpNodale=odeint(deriv,y01,t)
-#Solution2=odeint(deriv2,y02,t)
-Solution1=zeros((2000,52))
-for i in range(2000):
-    Solution1[i]=dot(U,RpNodale[i,:50])
-
-plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
+#y01=[0 for i in range(100)] #Conditions initiales nulles en position et vitesse
+##y02=[0 for i in range(104)]
+#t=linspace(0,0.08,2000)
+#RpNodale=odeint(deriv,y01,t)
+##Solution2=odeint(deriv2,y02,t)
+#Solution1=zeros((2000,52))
+#for i in range(2000):
+#    Solution1[i]=dot(U,RpNodale[i,:50])
+#
+#plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
 
 fq=arange(0,5000,12.5)
-temps=arange(0,2/399*1/5000,10**-5)
+j=complex(0,1)
+T0=0.08
+def ImpactFourier(f,T=0.24*10**-3):
+    """Transformée de Fourrier du demi sinus"""
+    return T/pi*(1+e**(-2*j*pi*T*f))/(1-4*f**2*T**2)
 
-
+Niw=zeros((50,400),dtype=complex)
+Fw=zeros((2*(n+1),400),dtype=complex)
+for i in range(1,400):
+    Fw[2*position][i]=ImpactFourier(fq[i])
+for ligne in range(50):
+    for i in range(1,400):
+        Niw[ligne,i]=dot(U[:,ligne],Fw[:,i])/(Mdiag[ligne,ligne]-Kdiag[ligne,ligne]/(2*pi*fq[i])**2+Bdiag[ligne,ligne]/(j*2*pi*fq[i]))
+        
+Acc=dot(U,Niw)
+Autospectre=[(Acc[0,i]*Acc[0,i].conjugate()).real/(T0**2) for i in range(400)]
+plt.figure(1)
+plt.subplot(211)
+plt.plot(fq,Autospectre)
+plt.subplot(212)
+plt.semilogy(fq,array(Autospectre))
+plt.figure(2)
+plt.plot(fq,20*log10(array(Autospectre)))
+plt.show()   
