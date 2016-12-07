@@ -166,7 +166,7 @@ def deriv(y,t):
     return dydt
 
 def deriv2(y,t):
-    """Solution directe, conservation des modes rigides donc à ne utiliser
+    """Solution directe, conservation des modes rigides donc à ne pas utiliser
     pour une intégration sans traitement des donnees"""
     dydt=zeros_like(y)
     milieu=int(len(y)/2)
@@ -179,6 +179,7 @@ def deriv2(y,t):
     
 
 
+<<<<<<< HEAD:ReponseSpectrale.py
 #y01=[0 for i in range(100)] #Conditions initiales nulles en position et vitesse
 ##y02=[0 for i in range(104)]
 #t=linspace(0,0.08,2000)
@@ -215,3 +216,19 @@ plt.semilogy(fq,array(Autospectre))
 plt.figure(2)
 plt.plot(fq,20*log10(array(Autospectre)))
 plt.show()   
+=======
+y01=[0 for i in range(100)]     #Conditions initiales nulles en position et vitesse
+#y02=[0 for i in range(104)]
+t=linspace(0,0.03,2000)
+RpNodale=odeint(deriv,y01,t)
+#Solution2=odeint(deriv2,y02,t)
+Solution1=zeros((2000,52))
+for i in range(2000):
+    Solution1[i]=dot(U,RpNodale[i,:50])
+
+plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
+
+
+
+
+>>>>>>> master:IntegrationNumerique.py
