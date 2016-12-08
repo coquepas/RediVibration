@@ -23,6 +23,11 @@ J=mp*(lp**2+b**2)/12
 #Initialisation des matrices Masse et Raideur
 M=zeros(((n+1)*2,(n+1)*2))
 K=zeros((2*(n+1),2*(n+1)))
+fe=12800    #frequence echantillonage
+N=1024      #Nombre de points
+T0=N/fe     #Temps d'acquisition
+t=linspace(0,T0,N)  #array temporel
+
 
 Choix="1-Modèle masses concentrées\n2-Modèle Bernoulli\n3-Modèle Timoshenko"
 print(Choix)
@@ -107,7 +112,8 @@ utri=[u[:,ind].real for ind in indices]
 #    print("Fréquence f",i+1,"=",f[i]," Hz",sep="")
 #    print("Vecteur propre :\n",utri[i])
 if len(f)>=3:
-    print(ftri[0],'Hz ',ftri[1],'Hz ',ftri[2],'Hz')
+    print('{:.0f} Hz {:.0f} Hz {:.0f} Hz'.format(ftri[0],ftri[1],ftri[2]))
+    
 #Recherche de la réponse spectrale
 
 
@@ -149,7 +155,7 @@ B=2*xi/(2*pi*ftri[0])*K
 
 def imp(F0,T,t):
     if t<T/2:
-        F=F0*sin(2*pi*t/T)
+        F=F0*sin(pi*t/T)
     else:
         F=0
     return F
@@ -166,7 +172,7 @@ def deriv(y,t):
     return dydt
 
 def deriv2(y,t):
-    """Solution directe, conservation des modes rigides donc à ne pas utiliser
+    """Solution directe, conservation des modes rigides donc à ne utiliser
     pour une intégration sans traitement des donnees"""
     dydt=zeros_like(y)
     milieu=int(len(y)/2)
@@ -177,23 +183,27 @@ def deriv2(y,t):
     dydt[milieu:]=C
     return dydt
     
+"""Résolution du systme différentiel afin de créer le signal temporel"""
 
+y01=[0 for i in range(100)] #Conditions initiales nulles en position et vitesse
+#y02=[0 for i in range(104)]
+RpNodale=odeint(deriv,y01,t)
+#Solution2=odeint(deriv2,y02,t)
+Solution1=zeros((N,52))
+for i in range(N):
+    Solution1[i]=dot(U,RpNodale[i,:50])
+plt.figure(1)
+plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
+plt.ylabel('Accélérations m/s²')
+plt.xlabel('temps (s)')
+plt.title('Déplacement du point {:}'.format(position))
 
-<<<<<<< HEAD:ReponseSpectrale.py
-#y01=[0 for i in range(100)] #Conditions initiales nulles en position et vitesse
-##y02=[0 for i in range(104)]
-#t=linspace(0,0.08,2000)
-#RpNodale=odeint(deriv,y01,t)
-##Solution2=odeint(deriv2,y02,t)
-#Solution1=zeros((2000,52))
-#for i in range(2000):
-#    Solution1[i]=dot(U,RpNodale[i,:50])
-#
-#plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
+"""Résolution avec la méthode Fréquentielle"""
+
 
 fq=arange(0,5000,12.5)
 j=complex(0,1)
-T0=0.08
+
 def ImpactFourier(f,T=0.24*10**-3):
     """Transformée de Fourrier du demi sinus"""
     return T/pi*(1+e**(-2*j*pi*T*f))/(1-4*f**2*T**2)
@@ -208,27 +218,61 @@ for ligne in range(50):
         
 Acc=dot(U,Niw)
 Autospectre=[(Acc[0,i]*Acc[0,i].conjugate()).real/(T0**2) for i in range(400)]
-plt.figure(1)
+plt.figure(2)
 plt.subplot(211)
 plt.plot(fq,Autospectre)
 plt.subplot(212)
 plt.semilogy(fq,array(Autospectre))
-plt.figure(2)
+plt.figure(3)
 plt.plot(fq,20*log10(array(Autospectre)))
-plt.show()   
-=======
-y01=[0 for i in range(100)]     #Conditions initiales nulles en position et vitesse
-#y02=[0 for i in range(104)]
-t=linspace(0,0.03,2000)
-RpNodale=odeint(deriv,y01,t)
-#Solution2=odeint(deriv2,y02,t)
-Solution1=zeros((2000,52))
-for i in range(2000):
-    Solution1[i]=dot(U,RpNodale[i,:50])
-
-plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
 
 
+tim=linspace(0,1,300)
+
+def Marteau(t):
+    if t<0.24:
+        S=20*sin(pi*t/0.24)
+    else:
+        S=0
+    return S
+y=[]    
+for t in tim:
+    y=y+[Marteau(t)]
+
+plt.figure(4)
+plt.plot(tim,y,'m',linewidth=2)
+plt.ylim(0,22)
+plt.xlabel('temps (ms)')
+plt.ylabel('Effort (N)')
+plt.title('Choc demi-sinus')
 
 
->>>>>>> master:IntegrationNumerique.py
+
+
+
+#Analyse du signal
+def Hann(signal,t,T=T0):
+    """Fenetre de Hann"""
+    if t>T:
+        R=0
+    else:
+        R=(0.5-0.5*cos(2*pi*t/T))*signal
+    return R
+
+#Le fenêtrage ne donne finalement pas une meilleur solution
+
+
+"""Résolution à partir du signal temporel"""
+
+FFt=fft.fft(Solution1[:,0])
+Dft=FFt[:400]
+plt.figure(5)
+plt.plot(fq,20*log10(Dft))
+plt.xlabel('fréquence (Hz)')
+plt.ylabel('Gain (dB)')
+plt.title('Transformée de Fourier')
+plt.show()
+
+
+
+    
