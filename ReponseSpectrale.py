@@ -194,7 +194,7 @@ for i in range(N):
     Solution1[i]=dot(U,RpNodale[i,:50])
 plt.figure(1)
 plt.plot(t,Solution1[:,0],'b-') #,t,Solution2[:,0],'r-')
-plt.ylabel('Accélérations m/s²')
+plt.ylabel('Déplacement (m)')
 plt.xlabel('temps (s)')
 plt.title('Déplacement du point {:}'.format(position))
 
@@ -222,9 +222,9 @@ plt.figure(2)
 plt.subplot(211)
 plt.plot(fq,Autospectre)
 plt.subplot(212)
-plt.semilogy(fq,array(Autospectre))
-plt.figure(3)
 plt.plot(fq,20*log10(array(Autospectre)))
+#plt.figure(3)
+#plt.plot(fq,20*log10(array(Autospectre)))
 
 
 tim=linspace(0,1,300)
@@ -268,6 +268,14 @@ FFt=fft.fft(Solution1[:,0])
 Dft=FFt[:400]
 plt.figure(5)
 plt.plot(fq,20*log10(Dft))
+a=[ftri[0] for i in range(10)]
+b=[ftri[1] for i in range(10)]
+c=[ftri[2] for i in range(10)]
+y=linspace(-160,-80,10)
+plt.plot(a,y)
+plt.plot(b,y,'g')
+plt.plot(c,y,'g')
+plt.annotate('{:.0f} Hz'.format(ftri[0]),xy=(ftri[0],-120),xytext=(1600,-90),arrowprops=dict(facecolor='black', shrink=0.05,width=2))
 plt.xlabel('fréquence (Hz)')
 plt.ylabel('Gain (dB)')
 plt.title('Transformée de Fourier')
